@@ -1,30 +1,32 @@
 package com.gildedrose;
 
+import java.util.List;
+
 class GildedRose {
 
-    private static final String AGED_BRIE = "Aged Brie";
-    private static final String BACKSTAGE_PASSES = "Backstage passes to a TAFKAL80ETC concert";
-    private static final String SULFURAS = "Sulfuras, Hand of Ragnaros";
+    public static final String AGED_BRIE = "Aged Brie";
+    public static final String BACKSTAGE_PASSES = "Backstage passes to a TAFKAL80ETC concert";
+    public static final String SULFURAS = "Sulfuras, Hand of Ragnaros";
 
-    private Item[] items;
+    private List<Item> items;
 
-    public GildedRose(Item[] items) {
+    public GildedRose(List<Item> items) {
         this.items = items;
     }
 
     public void updateQuality() {
-        for (int i = 0; i < items.length; i++) {
-            startProcess(items[i]);
-            removeOneSellInItem(items[i]);
 
-            if (items[i].getSellIn() < 0) {
-               startProcess(items[i]);
+        items.forEach(item -> {
+            startProcess(item);
+            removeOneSellInItem(item);
+            if (item.getSellIn() < 0) {
+                startProcess(item);
             }
-        }
+        });
     }
 
     private void startProcess(Item item) {
-        if (!item.getName().equals(AGED_BRIE)) {
+        if (!item.getName().equals(AGED_BRIE) && !item.getName().equals(BACKSTAGE_PASSES)) {
             minimizeQuality(item);
         } else {
             increaseQuantityByOne(item);
@@ -32,10 +34,8 @@ class GildedRose {
     }
 
     private void minimizeQuality(Item item) {
-        if (!item.getName().equals(BACKSTAGE_PASSES) && item.getQuality() > 0) {
-            if (!item.getName().equals(SULFURAS)) {
-                item.setQuality(item.getQuality() - 1);
-            }
+        if (item.getQuality() > 0 && !item.getName().equals(SULFURAS)) {
+            item.setQuality(item.getQuality() - 1);
         }
     }
 
@@ -64,7 +64,7 @@ class GildedRose {
     }
 
     // only for tests
-    public Item[] getItems() {
+    public List<Item> getItems() {
         return items;
     }
 }

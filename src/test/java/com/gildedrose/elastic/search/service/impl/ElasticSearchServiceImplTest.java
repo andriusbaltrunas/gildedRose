@@ -12,7 +12,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by andriusbaltrunas on 4/9/2018.
@@ -30,6 +32,16 @@ public class ElasticSearchServiceImplTest {
         Assert.assertNotNull(items);
         Assert.assertTrue(!items.isEmpty());
         items.forEach(item -> Assert.assertNotNull(item));
+    }
+
+    @Test
+    public void testSearchItemById() throws IOException {
+        Map<String, String> params = new HashMap<>();
+        params.put("q", "_id:1");
+        List<Item> items = elasticSearchService.searchItems(params);
+        Assert.assertNotNull(items);
+        Assert.assertTrue(items.size() == 1);
+        Assert.assertNotNull(items.get(0));
     }
 
 }

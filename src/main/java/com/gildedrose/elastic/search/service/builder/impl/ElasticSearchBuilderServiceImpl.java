@@ -33,7 +33,7 @@ public class ElasticSearchBuilderServiceImpl implements ElasticSearchBuilderServ
     public Response executeRequest(String url, String method, Map<String, String> params) throws IOException {
         RestClient restClient = buildRestClient();
         Response response;
-        if (params != null) {
+        if (params != null && !params.isEmpty()) {
             response = restClient.performRequest(method, url, params);
         } else {
             response = restClient.performRequest(method, url);

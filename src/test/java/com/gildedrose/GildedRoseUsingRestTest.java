@@ -18,8 +18,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Created by andriusbaltrunas on 4/9/2018.
@@ -61,16 +66,31 @@ public class GildedRoseUsingRestTest {
         GildedRose app = new GildedRose(items);
 
         int days = 5;// day should be set manually
-        for (int i = 0; i < days; i++) {
-            System.out.println("-------- day " + i + " --------");
-            System.out.println("name, sellIn, quality");
-            for (Item item : items) {
-                System.out.println(item);
+
+        List<CompletableFuture<Void>> features = new ArrayList<>();
+        IntStream.range(0, days).forEach(i -> features.add(CompletableFuture.runAsync(() -> runProcess(items, app, i))));
+
+        CompletableFuture<Void> completableFuture = CompletableFuture.allOf(features.toArray(new CompletableFuture[features.size()]));
+        completableFuture.get();
+        IntStream.range(0, days).forEach(i -> {
+            CompletableFuture<Void> f = features.get(i);
+            System.out.println("Feature " + i + " is done " + f.isDone());
+        });
+    }
+
+    private void runProcess(List<Item> items, GildedRose app, int i) {
+        System.out.println("-------- day " + i + " --------");
+        System.out.println("name, sellIn, quality");
+        for (Item item : items) {
+            System.out.println("|DAY| " + i +" " +item);
+            try {
                 updateItem(item);
+            } catch (Exception e) {
+                //TODO LOG ERROR
             }
-            System.out.println();
-            app.updateQuality();
         }
+        System.out.println();
+        app.updateQuality();
     }
 
     public void updateItem(Item item) throws Exception {

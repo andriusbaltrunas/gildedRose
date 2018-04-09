@@ -1,12 +1,10 @@
-package com.gildedrose;
+package com.gildedrose.ob;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 public class Item {
 
     private @Getter @Setter String name;

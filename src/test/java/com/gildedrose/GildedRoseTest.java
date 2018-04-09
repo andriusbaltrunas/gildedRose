@@ -1,5 +1,6 @@
 package com.gildedrose;
 
+import com.gildedrose.ob.Item;
 import org.junit.Test;
 
 import java.util.ArrayList;

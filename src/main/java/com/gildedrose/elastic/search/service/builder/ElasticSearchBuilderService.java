@@ -1,5 +1,6 @@
 package com.gildedrose.elastic.search.service.builder;
 
+import com.gildedrose.ob.Item;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 
@@ -15,4 +16,6 @@ public interface ElasticSearchBuilderService {
     RestClient buildRestClient();
 
     Response executeRequest(String url, String method, Map<String, String> params) throws IOException;
+
+    Response updateRequest(String url, Item item, String method) throws IOException;
 }

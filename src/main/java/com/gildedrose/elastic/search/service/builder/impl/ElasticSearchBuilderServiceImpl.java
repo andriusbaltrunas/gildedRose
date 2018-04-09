@@ -1,7 +1,11 @@
 package com.gildedrose.elastic.search.service.builder.impl;
 
 import com.gildedrose.elastic.search.service.builder.ElasticSearchBuilderService;
+import com.gildedrose.ob.Item;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.nio.entity.NStringEntity;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +13,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -38,6 +43,14 @@ public class ElasticSearchBuilderServiceImpl implements ElasticSearchBuilderServ
         } else {
             response = restClient.performRequest(method, url);
         }
+        return response;
+    }
+
+    @Override
+    public Response updateRequest(String url, Item item, String method) throws IOException {
+        HttpEntity entity = new NStringEntity(item.convertToJson(), ContentType.APPLICATION_JSON);
+        RestClient restClient = buildRestClient();
+        Response response = restClient.performRequest(method, url, Collections.EMPTY_MAP, entity);
         return response;
     }
 }

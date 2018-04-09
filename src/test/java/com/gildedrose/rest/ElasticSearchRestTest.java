@@ -5,11 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gildedrose.SpringBootStartUp;
 import com.gildedrose.ob.Item;
 import junit.framework.TestCase;
-import org.junit.Assert;
+
+import static org.junit.Assert.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -35,6 +38,7 @@ public class ElasticSearchRestTest {
 
     private static final String PATH = "/elasticSearch/getItems";
     private static final String PATH_WITH_ITEM_ID = "/elasticSearch/getItems?q=_id:1";
+    private static final String UPDATE_ITEM_BY_ID = "/elasticSearch/{itemId}/updateItem";
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -59,9 +63,9 @@ public class ElasticSearchRestTest {
                 e.printStackTrace();
             }
         });
-        Assert.assertTrue(!items.isEmpty());
+        assertTrue(!items.isEmpty());
 
-        items.forEach(i -> Assert.assertNotNull(i));
+        items.forEach(i -> assertNotNull(i));
     }
 
     @Test
@@ -70,8 +74,19 @@ public class ElasticSearchRestTest {
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode node = objectMapper.readTree(resultActions.andReturn().getResponse().getContentAsString());
         Item item = objectMapper.readValue(node.get(0).toString(), Item.class);
-        Assert.assertNotNull(item);
+        assertNotNull(item);
+    }
 
+    @Test
+    public void testUpdateItem() throws Exception {
+        Item item = new Item("Aged Brie", 22, 21);
+        item.setId(1);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(item);
+        String url = UPDATE_ITEM_BY_ID.replace("{itemId}", String.valueOf(item.getId()));
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post(url).contentType(MediaType.APPLICATION_JSON).content(jsonString));
+        boolean isUpdated = Boolean.parseBoolean(resultActions.andReturn().getResponse().getContentAsString());
+        assertTrue(isUpdated);
     }
 
 }

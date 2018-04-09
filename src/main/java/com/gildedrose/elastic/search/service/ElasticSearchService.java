@@ -13,9 +13,7 @@ public interface ElasticSearchService {
 
     List<Item> searchItems(Map<String, String> params) throws IOException;
 
-    Item getItem(int itemId);
-
-    void createItem(Item item);
+    boolean updateItem(Item item) throws IOException;
 
     void deleteItem();
 }

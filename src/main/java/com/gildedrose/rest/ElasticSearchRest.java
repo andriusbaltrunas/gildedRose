@@ -2,12 +2,8 @@ package com.gildedrose.rest;
 
 import com.gildedrose.elastic.search.service.ElasticSearchService;
 import com.gildedrose.ob.Item;
-import org.apache.commons.codec.binary.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
 import java.io.IOException;
@@ -39,5 +35,19 @@ public class ElasticSearchRest {
             //TODO LOG ERROR GIVE RESPONSE TO USER
         }
         return items;
+    }
+
+    @RequestMapping(value = "/{itemId}/updateItem", method = RequestMethod.POST)
+    public boolean updateItem(@PathVariable("itemId") String itemId, @RequestBody Item item) {
+        boolean isUpdated = false;
+        if (item != null) {
+            item.setId(Integer.valueOf(itemId));
+            try {
+                isUpdated = elasticSearchService.updateItem(item);
+            } catch (IOException e) {
+                //TODO LOG ERROR
+            }
+        }
+        return isUpdated;
     }
 }

@@ -3,13 +3,14 @@ package com.gildedrose.elastic.search.service.impl;
 import com.gildedrose.SpringBootStartUp;
 import com.gildedrose.elastic.search.service.ElasticSearchService;
 import com.gildedrose.ob.Item;
-import org.junit.Assert;
+
+import static org.junit.Assert.*;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -29,9 +30,9 @@ public class ElasticSearchServiceImplTest {
     @Test
     public void testGetAllSearchResults() throws IOException {
         List<Item> items = elasticSearchService.searchItems(null);
-        Assert.assertNotNull(items);
-        Assert.assertTrue(!items.isEmpty());
-        items.forEach(item -> Assert.assertNotNull(item));
+        assertNotNull(items);
+        assertTrue(!items.isEmpty());
+        items.forEach(item -> assertNotNull(item));
     }
 
     @Test
@@ -39,9 +40,17 @@ public class ElasticSearchServiceImplTest {
         Map<String, String> params = new HashMap<>();
         params.put("q", "_id:1");
         List<Item> items = elasticSearchService.searchItems(params);
-        Assert.assertNotNull(items);
-        Assert.assertTrue(items.size() == 1);
-        Assert.assertNotNull(items.get(0));
+        assertNotNull(items);
+        assertTrue(items.size() == 1);
+        assertNotNull(items.get(0));
+    }
+
+    @Test
+    public void testCreateNewItem() throws IOException {
+        Item item = new Item("Aged Brie", 12, 34);
+        item.setId(1);
+        boolean isUpdated = elasticSearchService.updateItem(item);
+        assertTrue(isUpdated);
     }
 
 }

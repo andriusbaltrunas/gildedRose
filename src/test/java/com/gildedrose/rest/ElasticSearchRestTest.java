@@ -33,6 +33,9 @@ import java.util.List;
 @WebAppConfiguration
 public class ElasticSearchRestTest {
 
+    private static final String PATH = "/elasticSearch/getItems";
+    private static final String PATH_WITH_ITEM_ID = "/elasticSearch/getItems?q=_id:1";
+
     @Autowired
     private WebApplicationContext webApplicationContext;
 
@@ -45,7 +48,7 @@ public class ElasticSearchRestTest {
 
     @Test
     public void testGetAllItems() throws Exception {
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/elasticSearch/getItems"));
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(PATH));
         List<Item> items = new ArrayList<>();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode node = objectMapper.readTree(resultActions.andReturn().getResponse().getContentAsString());
@@ -59,6 +62,16 @@ public class ElasticSearchRestTest {
         Assert.assertTrue(!items.isEmpty());
 
         items.forEach(i -> Assert.assertNotNull(i));
+    }
+
+    @Test
+    public void testGetItemById() throws Exception {
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(PATH_WITH_ITEM_ID));
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode node = objectMapper.readTree(resultActions.andReturn().getResponse().getContentAsString());
+        Item item = objectMapper.readValue(node.get(0).toString(), Item.class);
+        Assert.assertNotNull(item);
+
     }
 
 }

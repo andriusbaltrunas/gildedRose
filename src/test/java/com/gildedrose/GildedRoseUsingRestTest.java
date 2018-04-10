@@ -18,12 +18,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -83,17 +80,23 @@ public class GildedRoseUsingRestTest {
         System.out.println("name, sellIn, quality");
         for (Item item : items) {
             System.out.println("|DAY| " + i +" " +item);
-            try {
-                updateItem(item);
-            } catch (Exception e) {
-                //TODO LOG ERROR
-            }
         }
         System.out.println();
         app.updateQuality();
+        updateItemsOneTimeInDay(items);
     }
 
-    public void updateItem(Item item) throws Exception {
+    private void updateItemsOneTimeInDay(List<Item> items){
+        items.forEach(item -> {
+            try {
+                updateItem(item);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void updateItem(Item item) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonString = objectMapper.writeValueAsString(item);
         String url = UPDATE_PATH.replace("{itemId}", String.valueOf(item.getId()));

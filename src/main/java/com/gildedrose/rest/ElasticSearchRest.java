@@ -2,6 +2,8 @@ package com.gildedrose.rest;
 
 import com.gildedrose.elastic.search.service.ElasticSearchService;
 import com.gildedrose.ob.Item;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,8 @@ import java.util.Map;
 @RequestMapping(value = "/elasticSearch")
 public class ElasticSearchRest {
 
+    private static final Logger log = LoggerFactory.getLogger(ElasticSearchRest.class);
+
     @Autowired
     private ElasticSearchService elasticSearchService;
 
@@ -31,8 +35,9 @@ public class ElasticSearchRest {
         List<Item> items = new ArrayList<>();
         try {
             items = elasticSearchService.searchItems(params);
+            log.info("Successfully got items from elastic search, result size is " + items.size());
         } catch (IOException e) {
-            //TODO LOG ERROR GIVE RESPONSE TO USER
+            log.error("Can`t get items from elastic search service", e);
         }
         return items;
     }
@@ -44,8 +49,9 @@ public class ElasticSearchRest {
             item.setId(Integer.valueOf(itemId));
             try {
                 isUpdated = elasticSearchService.updateItem(item);
+                log.info("item successfully updated " + item.convertToJson());
             } catch (IOException e) {
-                //TODO LOG ERROR
+                log.error("Can`t update elastic seatch item",e);
             }
         }
         return isUpdated;

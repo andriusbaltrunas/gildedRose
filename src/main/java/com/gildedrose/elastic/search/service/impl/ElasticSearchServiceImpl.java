@@ -5,10 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gildedrose.elastic.search.service.ElasticSearchService;
 import com.gildedrose.elastic.search.service.builder.ElasticSearchBuilderService;
 import com.gildedrose.ob.Item;
-import org.apache.http.HttpEntity;
-import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,8 @@ import java.util.stream.IntStream;
  */
 @Service
 public class ElasticSearchServiceImpl implements ElasticSearchService {
+
+    private static final Logger log = LoggerFactory.getLogger(ElasticSearchServiceImpl.class);
 
     private static final String SEARCH = "_search";
     private static final String ID = "_id";
@@ -80,7 +82,7 @@ public class ElasticSearchServiceImpl implements ElasticSearchService {
         try {
             t = objectMapper.readValue(jsonNode.toString(), clazz);
         } catch (IOException e) {
-            //TODO LOG ERROR
+            log.error("Can`t map json to object ", e);
         }
         return t;
     }
